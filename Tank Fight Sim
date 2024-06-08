@@ -1,0 +1,1240 @@
+local playerName = game.Players.LocalPlayer.Name
+local plrtank = workspace.Tanks[playerName .. " Tank"]
+local tank = workspace.BreakableParts.Dungeon
+local remote = game:GetService("ReplicatedStorage").Events
+
+getgenv().zniv_UGC = true
+getgenv().zniv_GIFTS = true
+getgenv().zniv_MAGNET = true
+getgenv().zniv_ASCEND = true
+getgenv().zniv_UPGRADE = true
+getgenv().zniv_UPGRADE2 = true
+getgenv().zniv_SPIN = true
+getgenv().zniv_DMG = true
+getgenv().zniv_PUSH = true
+getgenv().zniv_DUNGEON = true
+getgenv().zniv_START = true
+getgenv().zniv_QUIT = true
+getgenv().zniv_SHOOT = true
+getgenv().zniv_HATCH = true
+getgenv().zniv_CRAFT = true
+getgenv().zniv_SHOP1 = true
+getgenv().zniv_SHOP2 = true
+getgenv().zniv_SHOP3 = true
+getgenv().zniv_HACK = true
+getgenv().zniv_SMALL = true
+getgenv().zniv_MEDIUM = true
+getgenv().zniv_HIGH = true
+
+function UGC()
+  spawn(function()
+    while getgenv().zniv_UGC do
+      for i,v in pairs(require(game:GetService("ReplicatedStorage").Modules.CurrentUGCEvents)) do
+        if tostring(i) ~= nil then
+          local args = { [1] = i }
+          remote:WaitForChild("NewUGCEvents"):WaitForChild("RequestEventData"):FireServer(unpack(args))
+          task.wait(0.04)
+          remote:WaitForChild("NewUGCEvents"):WaitForChild("ClickedEventClaimButton"):FireServer(unpack(args))
+          task.wait(0.1)
+        end
+      end
+      task.wait(1.5)
+    end
+  end)
+end
+
+function GIFTS()
+  while getgenv().zniv_GIFTS and task.wait() do
+    for i = 1, 12 do
+      local gift = game:GetService("Players").LocalPlayer.PlayerGui.PlaytimeRewards.Frame.Frame:FindFirstChild("Gift" .. i)
+      if gift and gift:FindFirstChild("Timer") and gift.Timer.Text == "Claim!" then
+        game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlaytimeRewardUpdateEvent"):FireServer(i)
+      end
+    end
+  end
+end
+
+function MAGNET()
+  while getgenv().zniv_MAGNET do
+    for i, v in pairs(workspace.ClientCoinsGems:GetChildren()) do
+      if v:IsA("Part") and game.Players.LocalPlayer.Character and
+      game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        v.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+      end
+    end
+    wait(0.05)
+  end
+end
+
+function SPIN()
+  spawn(function()
+    while getgenv().zniv_SPIN do
+      remote:WaitForChild("SpinWheelEvent"):FireServer("Spin")
+      task.wait()
+    end
+  end)
+end
+
+function ASCEND()
+  spawn(function()
+    while getgenv().zniv_ASCEND do
+      remote:WaitForChild("AscendEvent"):FireServer(true)
+      task.wait()
+    end
+  end)
+end
+
+function UPGRADE()
+  spawn(function()
+    while getgenv().zniv_UPGRADE do
+      remote.PowerCore:InvokeServer("PurchaseNext")
+      task.wait()
+    end
+  end)
+end
+
+function UPGRADE2()
+  spawn(function()
+    while getgenv().zniv_UPGRADE2 do
+      remote.PowerCoreV2:InvokeServer("PurchaseNext")
+      task.wait()
+    end
+  end)
+end
+
+function DMG()
+  spawn(function()
+    while getgenv().zniv_DMG do
+      remote.DamageIncreaseOnClickEvent:FireServer()
+      task.wait()
+    end
+  end)
+end
+
+function PUSH()
+  spawn(function()
+    while getgenv().zniv_PUSH do
+      remote.PushEvent:FireServer(true) 
+      task.wait()
+    end
+  end)
+end
+
+function DUNGEON()
+    while getgenv().zniv_DUNGEON do
+        local children = tank:GetChildren()
+        local found = false
+        for _, v in ipairs(children) do
+            if v:IsA("Model") then
+                local destination = v:GetModelCFrame().Position
+                local offset = (destination - plrtank.PrimaryPart.Position).unit * 10 -- Adjust the factor as needed
+                plrtank:SetPrimaryPartCFrame(CFrame.new(destination + offset))
+                task.wait(0.1) -- Wait a bit before moving to the next child
+                break -- Exit the loop after teleporting to the first child
+            end
+        end
+        task.wait() -- Wait before checking for the next child
+    end
+end
+
+function START()
+  spawn(function()
+    while getgenv().zniv_START do
+      local args = {
+    [1] = "StartDungeon"
+}
+
+game:GetService("ReplicatedStorage").Events.DungeonEvent:FireServer(unpack(args))
+      task.wait(3)
+    end
+  end)
+end
+
+function SHOOT()
+  spawn(function()
+    while getgenv().zniv_SHOOT do
+      game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("ReloadEvent"):FireServer()
+      game:GetService("ReplicatedStorage").FireCannon:FireServer()
+      task.wait()
+    end
+  end)
+end
+
+function HATCH(selectedEgg)
+  spawn(function()
+    while wait() do
+      if not getgenv().zniv_HATCH then break end
+      remote:WaitForChild("PlayerPressedKeyOnEgg"):FireServer(selectedEgg)
+      task.wait()
+    end
+  end)
+end
+
+function CRAFT(selectedEquipment)
+  spawn(function()
+    while getgenv().zniv_CRAFT do
+      remote.CraftingEvent:FireServer(selectedEquipment)
+      task.wait(0.5)
+    end
+  end)
+end
+
+function SHOP1()
+  spawn(function()
+    while getgenv().zniv_SHOP1 do
+      remote.EquipmentStoreEvent:InvokeServer("Purchase", 1)
+      task.wait(0.5)
+    end
+  end)
+end
+
+function SHOP2()
+  spawn(function()
+    while getgenv().zniv_SHOP2 do
+      remote.EquipmentStoreEvent:InvokeServer("Purchase", 2)
+      task.wait(0.5)
+    end
+  end)
+end
+
+function SHOP3()
+  spawn(function()
+    while getgenv().zniv_SHOP3 do
+      remote.EquipmentStoreEvent:InvokeServer("Purchase", 3)
+      task.wait(0.5)
+    end
+  end)
+end
+
+function HACK()
+  while getgenv().zniv_HACK and task.wait(1.4) do
+    if game:GetService("Players").LocalPlayer.PlayerGui.Hacker.Frame.HackButton.Visible == true then
+      remote.HackEvent:InvokeServer("Begin")
+    end
+  end
+end
+
+function SMALL()
+  spawn(function()
+    while getgenv().zniv_SMALL and task.wait(0.5) do
+      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
+        remote.WishingWell:FireServer("Small")
+      end
+    end
+  end)
+end
+    
+function MEDIUM()
+  spawn(function()
+    while getgenv().zniv_MEDIUM and task.wait(0.5) do
+      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
+        remote.WishingWell:FireServer("Medium")
+      end
+    end
+  end)
+end
+
+function HIGH()
+  spawn(function()
+    while getgenv().zniv_HIGH and task.wait(0.5) do
+      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
+        remote.WishingWell:FireServer("Mega")
+      end
+    end
+  end)
+end
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+local Window = Fluent:CreateWindow({
+    Title = "[PLASMA] Tank Fight Simulator [BETA] ",
+    SubTitle = "Zniv Hub",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+local Tabs = {
+    Home = Window:AddTab({ Title = "Home", Icon = "home" }),
+    Main = Window:AddTab({ Title = "Main", Icon = "gamepad-2" }),
+    Pets = Window:AddTab({ Title = "Egg", Icon = "egg" }),
+    Misc = Window:AddTab({ Title = "Misc", Icon = "coins" }),
+    Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+Fluent:Notify({
+    Title = "Script Loaded!",
+    Content = "Logged in as " .. game.Players.LocalPlayer.Name,
+    Duration = 3
+})
+
+Tabs.Home:AddSection("Claim")
+
+Tabs.Home:AddToggle("ToggleAutoClaim", { Title = "Auto Claim UGCS", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_UGC = Value
+  UGC()
+end)
+
+Tabs.Home:AddToggle("ToggleAutoClaimGIFTS", { Title = "Auto Claim GIFTS", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_GIFTS = Value
+  GIFTS()
+end)
+
+Tabs.Home:AddToggle("ToggleAutoDrops", { Title = "Magnet (Get Drops) ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_MAGNET = Value
+  MAGNET()
+end)
+
+Tabs.Home:AddToggle("ToggleAutoSpin", { Title = "Auto Spin", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SPIN = Value
+  SPIN()
+end)
+
+Tabs.Home:AddSection("Upgrades")
+
+Tabs.Home:AddToggle("ToggleAutoAscend", { Title = "Auto Ascend", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_ASCEND = Value
+  ASCEND()
+end)
+
+Tabs.Home:AddToggle("ToggleAutoUpgrade", { Title = "Auto Buy PowerCore ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_UPGRADE = Value
+  UPGRADE()
+end)
+
+Tabs.Home:AddToggle("ToggleAutoUpgrade2", { Title = "Auto Buy PowerCore V2 ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_UPGRADE2 = Value
+  UPGRADE2()
+end)
+
+Tabs.Home:AddSection("Anti AFK")
+
+Tabs.Home:AddButton({
+        Title = "Anti AFK V1",
+         Callback = function()
+            Window:Dialog({
+                Title = "Are you sure?",
+                Content = "Anti AFK",
+                Buttons = {
+                    {
+                        Title = "Yes",
+                        Callback = function()
+                          wait(0.5)
+                          local bb = game:service 'VirtualUser'
+                          game:service 'Players'.LocalPlayer.Idled:connect(function()
+                            bb:CaptureController()
+                            bb:ClickButton2(Vector2.new())
+                          end)
+                          print("anti AFK V1 enabled")
+                        end
+                    },
+                    {
+                        Title = "No",
+                        Callback = function()
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+Tabs.Home:AddButton({
+        Title = "Anti AFK V2",
+         Callback = function()
+            Window:Dialog({
+                Title = "Are you sure?",
+                Content = "Anti AFK V2",
+                Buttons = {
+                    {
+                        Title = "Yes",
+                        Callback = function()
+                          if not game:IsLoaded() then
+                            game.Loaded:Wait()
+                          end
+                          
+                          for i, v in pairs(getconnections(game:GetService("Players").LocalPlayer.Idled)) do
+                            v:Disable()
+                          end
+                          print("anti AFK V2 enabled")
+                        end
+                    },
+                    {
+                        Title = "No",
+                        Callback = function()
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+Tabs.Home:AddButton({
+        Title = "Remove Game Force Kick",
+        Description = "Click to Remove Game Force Kick",
+        Callback = function()
+            Window:Dialog({
+                Title = "Are you sure?",
+                Content = "Remove Game Force Kick",
+                Buttons = {
+                    {
+                        Title = "Yes",
+                        Callback = function()
+                          if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("IdleCheck") then
+                            game.Players.LocalPlayer.PlayerScripts.IdleCheck:Destroy()
+                          end
+                          if game:GetService("ReplicatedStorage").Events:FindFirstChild("NewServer") then
+                            game:GetService("ReplicatedStorage").Events.NewServer:Destroy()
+                          end
+                        end
+                    },
+                    {
+                        Title = "No",
+                        Callback = function()
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+Tabs.Main:AddSection("Auto Farm")
+
+Tabs.Main:AddToggle("ToggleAutoTrain", { Title = "Auto Train", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_DMG = Value
+  DMG()
+end)
+
+Tabs.Main:AddToggle("ToggleAutoWin", { Title = "Auto Win Fight", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_PUSH = Value
+  PUSH()
+end)
+
+Tabs.Main:AddSection("Dungeon")
+
+Tabs.Main:AddToggle("ToggleAutoDungeon", { Title = "Auto Farm Dungeon", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_DUNGEON = Value
+  if Value then
+    DUNGEON()
+  end
+end)
+
+Tabs.Main:AddToggle("ToggleAutoStart", { Title = "Auto Start Dungeon", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_START = Value
+  START()
+end)
+
+local wavethreshold = 20
+
+Tabs.Main:AddInput("InputAmount", {
+    Title = "Wave threshold to Stop",
+    Default = "20",
+    Placeholder = "Enter Wave",
+    Numeric = true,
+    Finished = true,
+    Callback = function(value)
+        wavethreshold = tonumber(value)
+        print("Wave threshold to Stop: " .. wavethreshold)
+    end
+})
+
+Tabs.Main:AddToggle("ToggleAutoQuit", { Title = "Auto Stop", Default = false }):OnChanged(function(Value)
+    getgenv().zniv_QUIT = Value
+    if Value then
+        while getgenv().zniv_QUIT do
+            local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
+            if playerGui:FindFirstChild("DungeonMain") and playerGui.DungeonMain.Enabled == true then
+                task.wait(0.25)
+                if playerGui:FindFirstChild("DungeonMain") and playerGui.DungeonMain.Enabled == true then
+                    local waveNumberText = playerGui.DungeonMain.Frame.Wave.WaveNumber.Text
+                    local waveNumber = tonumber(waveNumberText:match("%d+"))
+                    if waveNumber and waveNumber >= wavethreshold then
+                      game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("DungeonEvent"):FireServer("Exit")
+                    end
+                end
+            end
+            task.wait(0.15)
+        end
+    end
+end)
+
+Tabs.Main:AddToggle("ToggleAutoShoot", { Title = "Auto Shoot", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SHOOT = Value
+  SHOOT()
+end)
+
+Tabs.Pets:AddSection("Pets")
+
+Tabs.Pets:AddButton({
+        Title = "Remove Egg Animation",
+        Description = "Click to Remove Egg Animation",
+        Callback = function()
+            Window:Dialog({
+                Title = "Are you sure?",
+                Content = "Remove Egg Animation",
+                Buttons = {
+                    {
+                        Title = "Yes",
+                        Callback = function()
+                          game:GetService("ReplicatedStorage"):WaitForChild("EggOpenMap"):Destroy()
+                        end
+                    },
+                    {
+                        Title = "No",
+                        Callback = function()
+                        end
+                    }
+                }
+            })
+        end
+    })
+
+local selectedEgg
+
+local option = {
+  "Forest 1 Egg",
+  "Forest 2 Egg",
+  "Desert Egg",
+  "Cave Egg",
+  "Ocean Egg",
+  "Candy Zone Egg",
+  "Snow Egg",
+  "Toy Zone Egg",
+  "Farm Egg"
+}
+
+local egg = {
+  ["Forest 1 Egg"] = "1",
+  ["Forest 2 Egg"] = "Forest2",
+  ["Desert Egg"] = "2",
+  ["Cave Egg"] = "3",
+  ["Ocean Egg"] = "4",
+  ["Candy Zone Egg"] = "5",
+  ["Snow Egg"] = "6",
+  ["Toy Zone Egg"] = "7",
+  ["Farm Egg"] = "8"
+}
+
+local DropdownEgg = Tabs.Pets:AddDropdown("DropdownEgg:", {
+    Title = "Select Egg",
+    Values = option,
+    Multi = false,
+    Default = 1
+})
+
+DropdownEgg:OnChanged(function(Value)
+    selectedEgg = egg[Value]
+end)
+
+local ToggleEgg = Tabs.Pets:AddToggle("ToggleEgg", { Title = "Hatch Egg", Default = false })
+
+ToggleEgg:OnChanged(function(Value)
+  getgenv().zniv_HATCH = Value
+  HATCH(selectedEgg)
+end)
+
+Tabs.Pets:AddSection("Merge")
+
+local childrenName = {}
+
+for _, child in ipairs(game:GetService("ReplicatedStorage").PetModels:GetChildren()) do
+    table.insert(childrenName, child.Name)
+end
+table.sort(childrenName)
+
+local selectedPet = "default"
+
+local DropdownNew = Tabs.Pets:AddDropdown("ChoosePetDropdown", {
+    Title = "Choose Pet",
+    Values = childrenName,
+    Multi = false,
+    Default = 1,
+    Callback = function(selectMerge)
+        selectedPet = selectMerge
+        print("Selected Pet: " .. selectedPet)
+    end
+})
+
+local amountMerge = 1
+
+local InputAmount = Tabs.Pets:AddInput("InputAmount", {
+    Title = "Amount to use per each merge",
+    Default = "1",
+    Placeholder = "Enter amount",
+    Numeric = true,
+    Finished = true,
+    Callback = function(Value)
+        amountMerge = tonumber(Value)
+        print("Amount to use per each merge: " .. amountMerge)
+    end
+})
+
+InputAmount:OnChanged(function()
+  
+end)
+
+function GOLD()
+  getgenv().zniv_GOLDEN = true
+  while getgenv().zniv_GOLDEN do
+    local _, pets = game:GetService("ReplicatedStorage").Events.GenerateInventory:InvokeServer()
+            local count = 0
+            local output = ""
+            local i_values = {}
+            local ipets = {}
+            for i=1,6 do
+                ipets[i] = "placeholder"
+            end
+            task.wait()
+            for i, v in pairs(pets) do 
+            if v["name"] and v["name"] == selectedPet and v["petType"] and v["petType"] == "normal" then
+                count = count + 1
+                output = output .. i .. " " .. v["name"] .. " " .. v["petType"] .. " " .. count .. "\n"
+                table.insert(i_values, i)
+                end
+                if count >= amountMerge then
+                    break
+                end
+                
+            end
+            
+            for i, v in ipairs(i_values) do
+                if i == 1 then
+                    ipets[1] = v
+                elseif i == 2 then
+                    ipets[2] = v 
+                elseif i == 3 then
+                    ipets[3] = v 
+                elseif i == 4 then
+                    ipets[4] = v 
+                elseif i == 5 then
+                    ipets[5] = v 
+                elseif i == 6 then
+                    ipets[6] = v 
+                end
+            end
+            
+            if amountMerge == 1 then
+                local args = {
+                    [1] = {
+                        [ipets[1]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        }
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+            elseif amountMerge == 2 then
+                local args = {
+                    [1] = {
+                        [ipets[1]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[2]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        }
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+            elseif amountMerge == 3 then
+                local args = {
+                    [1] = {
+                        [ipets[1]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[2]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[3]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        }
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+            elseif amountMerge == 4 then
+                local args = {
+                    [1] = {
+                        [ipets[1]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[2]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[3]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[4]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        }
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+    
+            elseif amountMerge == 5 then
+                local args = {
+                    [1] = {
+                        [ipets[1]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[2]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[3]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[4]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        },
+                        [ipets[5]] = {
+                            ["currentXP"] = 0,
+                            ["name"] = "HUGESummerDragon",
+                            ["petType"] = "normal",
+                            ["level"] = 1,
+                            ["equipped"] = false,
+                            ["exists"] = 4323
+                        }
+                    }
+                }
+                
+                game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+            elseif amountMerge == 6 then
+    
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[2]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[3]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[4]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[5]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[6]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "normal",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerGoldenMerge"):FireServer(unpack(args))
+        end
+    task.wait(0.01)
+  end
+end
+
+local ToggleGold = Tabs.Pets:AddToggle("ToggleGold", {
+    Title = "Auto Merge to Golden",
+    Default = false
+})
+
+ToggleGold:OnChanged(function(Value)
+    getgenv().zniv_GOLDEN = Value
+    if getgenv().zniv_GOLDEN then
+        GOLD()
+    end
+end)
+
+function RB()
+  getgenv().zniv_RAINBOW = true
+  while getgenv().zniv_RAINBOW do
+    local _, pets = game:GetService("ReplicatedStorage").Events.GenerateInventory:InvokeServer()
+        local count = 0
+        local output = ""
+        local i_values = {}
+        local ipets = {}
+        for i=1,6 do
+            ipets[i] = "placeholder"
+        end
+        task.wait()
+        for i, v in pairs(pets) do 
+        if v["name"] and v["name"] == selectedPet and v["petType"] and v["petType"] == "golden" then
+            count = count + 1
+            output = output .. i .. " " .. v["name"] .. " " .. v["petType"] .. " " .. count .. "\n"
+            table.insert(i_values, i)
+            end
+            if count >= amountMerge then
+                break
+            end
+            
+        end
+        
+        for i, v in ipairs(i_values) do
+            if i == 1 then
+                ipets[1] = v
+            elseif i == 2 then
+                ipets[2] = v 
+            elseif i == 3 then
+                ipets[3] = v 
+            elseif i == 4 then
+                ipets[4] = v 
+            elseif i == 5 then
+                ipets[5] = v 
+            elseif i == 6 then
+                ipets[6] = v 
+            end
+        end
+        
+        if amountMerge == 1 then
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+        elseif amountMerge == 2 then
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[2]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+        elseif amountMerge == 3 then
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[2]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[3]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+        elseif amountMerge == 4 then
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[2]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[3]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[4]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+
+        elseif amountMerge == 5 then
+            local args = {
+                [1] = {
+                    [ipets[1]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[2]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[3]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[4]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    },
+                    [ipets[5]] = {
+                        ["currentXP"] = 0,
+                        ["name"] = "HUGESummerDragon",
+                        ["petType"] = "golden",
+                        ["level"] = 1,
+                        ["equipped"] = false,
+                        ["exists"] = 4323
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+        elseif amountMerge == 6 then
+
+        local args = {
+            [1] = {
+                [ipets[1]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                },
+                [ipets[2]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                },
+                [ipets[3]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                },
+                [ipets[4]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                },
+                [ipets[5]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                },
+                [ipets[6]] = {
+                    ["currentXP"] = 0,
+                    ["name"] = "HUGESummerDragon",
+                    ["petType"] = "golden",
+                    ["level"] = 1,
+                    ["equipped"] = false,
+                    ["exists"] = 4323
+                }
+            }
+        }
+        
+        game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("PlayerRainbowMerge"):FireServer(unpack(args))
+    end
+            print(unpack(ipets))
+    task.wait()
+  end
+end
+
+local ToggleRainbow = Tabs.Pets:AddToggle("ToggleRainbow", {
+    Title = "Auto Merge to Rainbow",
+    Default = false
+})
+
+ToggleRainbow:OnChanged(function(Value)
+    getgenv().zniv_RAINBOW = Value
+    if getgenv().zniv_RAINBOW then
+        RB()
+    end
+end)
+
+Tabs.Misc:AddSection("Blacksmith")
+
+local selectedEquipment
+
+local option = {
+  "Short Swords",
+  "Clover",
+  "Health Kit",
+  "Boots of Swiftness",
+  "Magnet",
+  "Lucky Die",
+  "Lucky Gem",
+  "Dagger",
+  "Lucky Tooth"
+}
+
+local item = {
+  ["Short Swords"] = "ShortSwords",
+  ["Clover"] = "Clover",
+  ["Health Kit"] = "HealthKit",
+  ["Boots of Swiftness"] = "BootsOfSwiftness",
+  ["Magnet"] = "CoinMagnet",
+  ["Lucky Die"] = "LuckyDie",
+  ["Lucky Gem"] = "LuckyGem",
+  ["Dagger"] = "Dagger",
+  ["Lucky Tooth"] = "LuckyTooth"
+}
+
+local DropdownCraft = Tabs.Misc:AddDropdown("DropdownCraft:", {
+    Title = "Select Equipment",
+    Values = option,
+    Multi = false,
+    Default = 1
+})
+
+DropdownCraft:OnChanged(function(Value)
+    selectedEquipment = item[Value]
+end)
+
+Tabs.Misc:AddToggle("ToggleCrafts", { Title = "Craft Selected Equipment", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_CRAFT = Value
+  CRAFT(selectedEquipment)
+end)
+
+Tabs.Misc:AddSection("Equipment Shop")
+
+Tabs.Misc:AddButton({
+    Title = "Print All Equipment Shop Items",
+    Description = "Click to Print All Equipment Shop Items",
+    Callback = function()
+      game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("EquipmentStoreEvent"):InvokeServer("Info")
+        task.wait(0.25)
+        for i = 1, 3 do
+            if game:GetService("Players").LocalPlayer.PlayerGui.EquipmentShop.Frame:FindFirstChild(i) and
+                game:GetService("Players").LocalPlayer.PlayerGui.EquipmentShop.Frame:FindFirstChild(i)
+                    :FindFirstChild("EquipmentName") then
+                print(tostring(i) .. ":",
+                    game:GetService("Players").LocalPlayer.PlayerGui.EquipmentShop.Frame:FindFirstChild(i)
+                        :FindFirstChild("EquipmentName").Text)
+            end
+        end
+    end
+})
+
+Tabs.Misc:AddToggle("ToggleAutoShop1", { Title = "Auto Buy Equipment 1 ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SHOP1 = Value
+  SHOP1()
+end)
+
+Tabs.Misc:AddToggle("ToggleAutoShop2", { Title = "Auto Buy Equipment 2 ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SHOP2 = Value
+  SHOP2()
+end)
+
+Tabs.Misc:AddToggle("ToggleAutoShop3", { Title = "Auto Buy Equipment 3 ", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SHOP3 = Value
+  SHOP3()
+end)
+
+Tabs.Misc:AddSection("Power Ups")
+
+Tabs.Misc:AddToggle("ToggleAutoHack", { Title = "Auto Hack", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_HACK = Value
+  if getgenv().zniv_HACK and game:GetService("Players").LocalPlayer.PlayerGui.Hacker.Frame.HackButton.Visible == true then
+  HACK()
+  end
+end)
+
+Tabs.Misc:AddToggle("ToggleAutoSmall", { Title = "Auto Small Wish", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_SMALL = Value
+  if getgenv().zniv_SMALL and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+  SMALL()
+  end
+end)
+
+Tabs.Misc:AddToggle("ToggleAutoMedium", { Title = "Auto Medium Wish", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_MEDIUM = Value
+  if getgenv().zniv_MEDIUM and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+  MEDIUM()
+  end
+end)
+
+Tabs.Misc:AddToggle("ToggleAutoHigh", { Title = "Auto High Wish", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_HIGH = Value
+  if getgenv().zniv_HIGH and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+  HIGH()
+  end
+end)
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+
+SaveManager:IgnoreThemeSettings()
+
+SaveManager:SetIgnoreIndexes({})
+
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/specific-game")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
+
+SaveManager:LoadAutoloadConfig()
