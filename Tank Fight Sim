@@ -129,11 +129,11 @@ function DUNGEON()
                 local destination = v:GetModelCFrame().Position
                 local offset = (destination - plrtank.PrimaryPart.Position).unit * 10 -- Adjust the factor as needed
                 plrtank:SetPrimaryPartCFrame(CFrame.new(destination + offset))
-                task.wait(0.1) -- Wait a bit before moving to the next child
-                break -- Exit the loop after teleporting to the first child
+                task.wait(0.1)
+                break
             end
         end
-        task.wait() -- Wait before checking for the next child
+        task.wait()
     end
 end
 
@@ -207,41 +207,39 @@ function SHOP3()
 end
 
 function HACK()
-  while getgenv().zniv_HACK and task.wait(1.4) do
-    if game:GetService("Players").LocalPlayer.PlayerGui.Hacker.Frame.HackButton.Visible == true then
-      remote.HackEvent:InvokeServer("Begin")
-    end
-  end
+    spawn(function()
+        while getgenv().zniv_HACK do
+            remote.HackEvent:InvokeServer("Begin")
+            wait(60 * 30)
+        end
+    end)
 end
 
 function SMALL()
-  spawn(function()
-    while getgenv().zniv_SMALL and task.wait(0.5) do
-      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
-        remote.WishingWell:FireServer("Small")
-      end
-    end
-  end)
+    spawn(function()
+        while getgenv().zniv_SMALL do
+            remote.WishingWell:FireServer("Small")
+            wait(60 * 15)
+        end
+    end)
 end
-    
+
 function MEDIUM()
-  spawn(function()
-    while getgenv().zniv_MEDIUM and task.wait(0.5) do
-      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
-        remote.WishingWell:FireServer("Medium")
-      end
-    end
-  end)
+    spawn(function()
+        while getgenv().zniv_MEDIUM do
+            remote.WishingWell:FireServer("Medium")
+            wait(60 * 60)
+        end
+    end)
 end
 
 function HIGH()
-  spawn(function()
-    while getgenv().zniv_HIGH and task.wait(0.5) do
-      if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text,"None. Feed me gems") then
-        remote.WishingWell:FireServer("Mega")
-      end
-    end
-  end)
+    spawn(function()
+        while getgenv().zniv_HIGH do
+            remote.WishingWell:FireServer("Mega")
+            wait(3 * 60 * 60)
+        end
+    end)
 end
 
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
@@ -503,7 +501,8 @@ local option = {
   "Candy Zone Egg",
   "Snow Egg",
   "Toy Zone Egg",
-  "Farm Egg"
+  "Farm Egg",
+  "Samurai Egg"
 }
 
 local egg = {
@@ -515,7 +514,8 @@ local egg = {
   ["Candy Zone Egg"] = "5",
   ["Snow Egg"] = "6",
   ["Toy Zone Egg"] = "7",
-  ["Farm Egg"] = "8"
+  ["Farm Egg"] = "8",
+  ["Samurai Egg"] = "9"
 }
 
 local DropdownEgg = Tabs.Pets:AddDropdown("DropdownEgg:", {
@@ -1197,31 +1197,31 @@ end)
 Tabs.Misc:AddSection("Power Ups")
 
 Tabs.Misc:AddToggle("ToggleAutoHack", { Title = "Auto Hack", Default = false }):OnChanged(function(Value)
-  getgenv().zniv_HACK = Value
-  if getgenv().zniv_HACK and game:GetService("Players").LocalPlayer.PlayerGui.Hacker.Frame.HackButton.Visible == true then
-  HACK()
-  end
+    getgenv().zniv_HACK = Value
+    if Value then
+        HACK()
+    end
 end)
 
 Tabs.Misc:AddToggle("ToggleAutoSmall", { Title = "Auto Small Wish", Default = false }):OnChanged(function(Value)
-  getgenv().zniv_SMALL = Value
-  if getgenv().zniv_SMALL and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  SMALL()
-  end
+    getgenv().zniv_SMALL = Value
+    if Value then
+        SMALL()
+    end
 end)
 
 Tabs.Misc:AddToggle("ToggleAutoMedium", { Title = "Auto Medium Wish", Default = false }):OnChanged(function(Value)
-  getgenv().zniv_MEDIUM = Value
-  if getgenv().zniv_MEDIUM and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  MEDIUM()
-  end
+    getgenv().zniv_MEDIUM = Value
+    if Value then
+        MEDIUM()
+    end
 end)
 
 Tabs.Misc:AddToggle("ToggleAutoHigh", { Title = "Auto High Wish", Default = false }):OnChanged(function(Value)
-  getgenv().zniv_HIGH = Value
-  if getgenv().zniv_HIGH and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  HIGH()
-  end
+    getgenv().zniv_HIGH = Value
+    if Value then
+        HIGH()
+    end
 end)
 
 SaveManager:SetLibrary(Fluent)
