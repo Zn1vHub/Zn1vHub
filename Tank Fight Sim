@@ -502,7 +502,25 @@ local option = {
   "Snow Egg",
   "Toy Zone Egg",
   "Farm Egg",
-  "Samurai Egg"
+  "Samurai Egg",
+  "Space Egg",
+  "Magical Forest Egg",
+  "Heaven Egg",
+  "Underworld Egg",
+  "Laboratory Egg",
+  "Pirate Egg",
+  "Savanna Egg",
+  "Roman Egg",
+  "Ice World Egg",
+  "Robot World Egg",
+  "Lava Egg",
+  "Fairy Egg",
+  "Haunted Egg",
+  "Egyptian Egg",
+  "Mechanical Egg",
+  "Nebula Egg",
+  "Cloud Egg",
+  "Bakery Egg"
 }
 
 local egg = {
@@ -515,7 +533,25 @@ local egg = {
   ["Snow Egg"] = "6",
   ["Toy Zone Egg"] = "7",
   ["Farm Egg"] = "8",
-  ["Samurai Egg"] = "9"
+  ["Samurai Egg"] = "9",
+  ["Space Egg"] = "10",
+  ["Magical Forest Egg"] = "11",
+  ["Heaven Egg"] = "12",
+  ["Underworld Egg"] = "13",
+  ["Laboratory Egg"] = "14",
+  ["Pirate Egg"] = "15",
+  ["Savanna Egg"] = "16",
+  ["Roman Egg"] = "17",
+  ["Ice World Egg"] = "18",
+  ["Robot World Egg"] = "19",
+  ["Lava Egg"] = "20",
+  ["Fairy Egg"] = "21",
+  ["Haunted Egg"] = "22",
+  ["Egyptian Egg"] = "23",
+  ["Mechanical Egg"] = "24",
+  ["Nebula Egg"] = "25",
+  ["Cloud Egg"] = "26",
+  ["Bakery Egg"] = "27"
 }
 
 local DropdownEgg = Tabs.Pets:AddDropdown("DropdownEgg:", {
@@ -1126,9 +1162,21 @@ local option = {
   "Boots of Swiftness",
   "Magnet",
   "Lucky Die",
-  "Lucky Gem",
   "Dagger",
-  "Lucky Tooth"
+  "Lucky Tooth",
+  "Jet Fuel",
+  "Lucky Gem",
+  "Heart",
+  "Heavy Hammer",
+  "Horse Shoe",
+  "Handful Of Coins",
+  "Health Gem",
+  "Dual Hammers",
+  "Golden Clover",
+  "Gem Stack",
+  "Golden Health Gem",
+  "Rocket Jet",
+  "Quad Hammers"
 }
 
 local item = {
@@ -1138,9 +1186,21 @@ local item = {
   ["Boots of Swiftness"] = "BootsOfSwiftness",
   ["Magnet"] = "CoinMagnet",
   ["Lucky Die"] = "LuckyDie",
-  ["Lucky Gem"] = "LuckyGem",
   ["Dagger"] = "Dagger",
-  ["Lucky Tooth"] = "LuckyTooth"
+  ["Lucky Tooth"] = "LuckyTooth",
+  ["Jet Fuel"] = "JetFuel",
+  ["Lucky Gem"] = "LuckyGem",
+  ["Heart"] = "Heart",
+  ["Heavy Hammer"] = "HeavyHammer",
+  ["Horse Shoe"] = "Horseshoe",
+  ["Handful Of Coins"] = "HandfulOfCoins",
+  ["Health Gem"] = "HealthGem",
+  ["Dual Hammers"] = "DualHammers",
+  ["Golden Clover"] = "GoldenClover",
+  ["Gem Stack"] = "GemStack",
+  ["Golden Health Gem"] = "GoldenHealthGem",
+  ["Rocket Jet"] = "RocketJet",
+  ["Quad Hammers"] = "QuadHammers"
 }
 
 local DropdownCraft = Tabs.Misc:AddDropdown("DropdownCraft:", {
