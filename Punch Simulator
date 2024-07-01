@@ -117,6 +117,15 @@ function PUSH()
   end)
 end
 
+function START()
+  spawn(function()
+    while getgenv().zniv_START do
+      remote.DungeonEvent:FireServer("StartDungeon")
+      task.wait(2.5)
+    end
+  end)
+end
+
 function DUNGEON()
   while getgenv().zniv_DUNGEON and task.wait(0.01) do
     local closestPart = nil
@@ -138,18 +147,10 @@ function DUNGEON()
   end
 end
 
-function START()
-  spawn(function()
-    while getgenv().zniv_START do
-      remote.DungeonEvent:FireServer("StartDungeon")
-      task.wait(3)
-    end
-  end)
-end
-
 function HATCH(selectedEgg)
   spawn(function()
-    while getgenv().zniv_HATCH do
+    while wait() do
+      if not getgenv().zniv_HATCH then break end
       remote:WaitForChild("PlayerPressedKeyOnEgg"):FireServer(selectedEgg)
       task.wait()
     end
