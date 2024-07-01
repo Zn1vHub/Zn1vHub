@@ -403,14 +403,14 @@ end)
 
 Tabs.Main:AddSection("Dungeon")
 
-Tabs.Main:AddToggle("ToggleAutoFarm", { Title = "Auto Farm Dungeon", Default = false }):OnChanged(function(Value)
-    getgenv().zniv_DUNGEON = Value
-  DUNGEON()
-end)
-
 Tabs.Main:AddToggle("ToggleAutoStart", { Title = "Auto Start Dungeon", Default = false }):OnChanged(function(Value)
   getgenv().zniv_START = Value
   START()
+end)
+
+Tabs.Main:AddToggle("ToggleAutoFarm", { Title = "Auto Farm Dungeon", Default = false }):OnChanged(function(Value)
+    getgenv().zniv_DUNGEON = Value
+  DUNGEON()
 end)
 
 local wavethreshold = 20
@@ -445,11 +445,6 @@ Tabs.Main:AddToggle("ToggleAutoQuit", { Title = "Auto Stop", Default = false }):
             task.wait(0.15)
         end
     end
-end)
-
-Tabs.Main:AddToggle("ToggleAutoShoot", { Title = "Auto Shoot", Default = false }):OnChanged(function(Value)
-  getgenv().zniv_SHOOT = Value
-  SHOOT()
 end)
 
 Tabs.Pets:AddSection("Pets")
