@@ -549,10 +549,8 @@ DropdownEgg:OnChanged(function(Value)
     selectedEgg = egg[Value]
 end)
 
-local ToggleEgg = Tabs.Pets:AddToggle("ToggleEgg", { Title = "Hatch Egg", Default = false })
-
-Tabs.Main:AddToggle("ToggleAutoFarm", { Title = "Auto Farm Dungeon", Default = false }):OnChanged(function(Value)
-    getgenv().zniv_HATCH = Value
+Tabs.Pets:AddToggle("ToggleAutoEgg", { Title = "Auto Hatch Egg", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_HATCH = Value
   HATCH(selectedEgg)
 end)
 
