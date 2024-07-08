@@ -119,7 +119,7 @@ function PUSH()
 end
 
 function EQUIP()
-  while getgenv().zniv_EQUIP and task.wait(autoequipbestspeed) do
+  while getgenv().zniv_EQUIP and task.wait(5) do
     remote:WaitForChild("RequestGloveShop"):FireServer()
     local closestRequirement = nil
     local closestDifference = math.huge
