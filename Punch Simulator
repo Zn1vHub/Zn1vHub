@@ -9,8 +9,9 @@ getgenv().zniv_UPGRADE2 = true
 getgenv().zniv_SPIN = true
 getgenv().zniv_DMG = true
 getgenv().zniv_PUSH = true
-getgenv().zniv_DUNGEON = true
+getgenv().zniv_EQUIP = true
 getgenv().zniv_START = true
+getgenv().zniv_DUNGEON = true
 getgenv().zniv_QUIT = true
 getgenv().zniv_SHOOT = true
 getgenv().zniv_HATCH = true
@@ -117,11 +118,40 @@ function PUSH()
   end)
 end
 
+function EQUIP()
+  while getgenv().zniv_EQUIP and task.wait(autoequipbestspeed) do
+    remote:WaitForChild("RequestGloveShop"):FireServer()
+    local closestRequirement = nil
+    local closestDifference = math.huge
+    local closestNameGlove = nil
+        
+    for i, v in pairs(require(game:GetService("ReplicatedStorage").Modules.GloveStats)) do
+      local requirement = tonumber(v.requirement)
+      local name = tostring(i)
+        
+      if requirement then
+        if requirement < game:GetService("Players").LocalPlayer.leaderstats.Damage.Value then
+          local difference = game:GetService("Players").LocalPlayer.leaderstats.Damage.Value - requirement
+                    
+          if difference < closestDifference then
+            closestDifference = difference
+            closestRequirement = requirement
+            closestNameGlove = name
+          end
+        end
+      end
+    end
+    
+    remote:WaitForChild("ClickedGlovesButton"):FireServer(tostring(closestNameGlove))
+    print(closestNameGlove)
+  end
+end
+
 function START()
   spawn(function()
     while getgenv().zniv_START do
       remote.DungeonEvent:FireServer("StartDungeon")
-      task.wait(2.5)
+      task.wait(5)
     end
   end)
 end
@@ -400,6 +430,13 @@ end)
 Tabs.Main:AddToggle("ToggleAutoWin", { Title = "Auto Win Fight", Default = false }):OnChanged(function(Value)
   getgenv().zniv_PUSH = Value
   PUSH()
+end)
+
+Tabs.Main:AddToggle("ToggleAutoEquipBestGlove", { Title = "Auto Equip Best Glove", Default = false }):OnChanged(function(Value)
+  getgenv().zniv_EQUIP = Value
+  if getgenv().zniv_EQUIP then
+    task.spawn(EQUIP)
+  end
 end)
 
 Tabs.Main:AddSection("Dungeon")
@@ -1247,22 +1284,28 @@ end)
 
 Tabs.Misc:AddToggle("ToggleAutoSmall", { Title = "Auto Small Wish", Default = false }):OnChanged(function(Value)
   getgenv().zniv_SMALL = Value
-  if getgenv().zniv_SMALL and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  SMALL()
+  if getgenv().zniv_SMALL then
+    if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+    end
+    SMALL()
   end
 end)
 
 Tabs.Misc:AddToggle("ToggleAutoMedium", { Title = "Auto Medium Wish", Default = false }):OnChanged(function(Value)
   getgenv().zniv_MEDIUM = Value
-  if getgenv().zniv_MEDIUM and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  MEDIUM()
+  if getgenv().zniv_MEDIUM then
+    if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+    end
+    MEDIUM()
   end
 end)
 
 Tabs.Misc:AddToggle("ToggleAutoHigh", { Title = "Auto High Wish", Default = false }):OnChanged(function(Value)
   getgenv().zniv_HIGH = Value
-  if getgenv().zniv_HIGH and string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
-  HIGH()
+  if getgenv().zniv_HIGH then
+    if string.find(game:GetService("Players").LocalPlayer.PlayerGui.WishingwellUI.Frame.top.WISH.Text, "None. Feed me gems") then
+    end
+    HIGH()
   end
 end)
 
