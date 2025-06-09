@@ -41,13 +41,13 @@ if _G.Interface == nil then
     })
 
     local Admins = {
-        8205778977
+        1352921105
     }
     local isAdmin = table.find(Admins, userId) ~= nil
 
     local Window = Fluent:CreateWindow({
         Title = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. " | " .. Version,
-        SubTitle = "(auto updt vers.) by .scyllabyte",
+        SubTitle = "(auto updt vers.) by .iPeanut",
         TabWidth = 100,
         Size = UDim2.fromOffset(550, 400),
         Acrylic = false,
