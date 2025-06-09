@@ -1506,6 +1506,13 @@ local Dungeons = {
         isBoss = false
     },
     {
+        name = "Prophet",
+        difficulty = "",
+        npcBaseId = 101029,
+        island = 4,
+        isBoss = true
+    },
+    {
         name = "The Flame King",
         difficulty = "",
         npcBaseId = 101021,
