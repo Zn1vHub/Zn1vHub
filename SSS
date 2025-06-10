@@ -1,18 +1,17 @@
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local Version = "Final"
 
-
-Fluent:Notify({
+    Fluent:Notify({
         Title = "Loading interface...",
         Content = "Interface is loading, please wait.",
         Duration = 5
     })
 
-
- local Window = Fluent:CreateWindow({
+    local Window = Fluent:CreateWindow({
         Title = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. " | " .. Version,
-        SubTitle = "ZnivHub",
+        SubTitle = "(auto updt vers.) by .iPeanut",
         TabWidth = 100,
         Size = UDim2.fromOffset(550, 400),
         Acrylic = false,
@@ -21,16 +20,25 @@ Fluent:Notify({
         MinimizeKey = Enum.KeyCode.LeftControl
     })
 
-
     local Tabs = {
         Player = Window:AddTab({ Title = "Player", Icon = "user" }),
         World = Window:AddTab({ Title = "World", Icon = "compass" }),
         Autofarm = Window:AddTab({ Title = "Autofarm", Icon = "repeat" }),
         ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
         Misc = Window:AddTab({ Title = "Server", Icon = "server" }),
+        Credits = Window:AddTab({ Title = "Credits", Icon = "book" }),
+        UpdateLogs = Window:AddTab({ Title = "Update Logs", Icon = "scroll" }),
+        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+    }
 
+    local Options = Fluent.Options
 
-ocal secplayer = Tabs.Player:AddSection("Player")
+    Tabs.Player:AddParagraph({
+        Title = "Some features might not work together correctly.",
+        Content = ""
+    })
+
+    local secplayer = Tabs.Player:AddSection("Player")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -1456,6 +1464,13 @@ local Dungeons = {
         npcBaseId = 101020,
         island = 4,
         isBoss = false
+    },
+    {
+        name = "Prophet",
+        difficulty = "",
+        npcBaseId = 101029,
+        island = 4,
+        isBoss = true
     },
     {
         name = "The Flame King",
@@ -2997,6 +3012,25 @@ miscserver:AddButton({
     end
 })
 
+    Tabs.UpdateLogs:AddParagraph({
+        Title = "Version: 1.0.5",
+        Content = "\n[+] "
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ====== UI CONFIGURATION SECTION ======
 -- Addons:
 -- SaveManager (Allows you to have a configuration system)
 -- InterfaceManager (Allows you to have a interface managment system)
@@ -3018,11 +3052,11 @@ SaveManager:SetIgnoreIndexes({})
 InterfaceManager:SetFolder("FluentScriptHub")
 SaveManager:SetFolder("FluentScriptHub/specific-game")
 
+Window:SelectTab(1)
+
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 
-
-Window:SelectTab(1)
 
 -- You can use the SaveManager:LoadAutoloadConfig() to load a config
 -- which has been marked to be one that auto loads!
