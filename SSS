@@ -1,53 +1,18 @@
--- loadstring(game:HttpGet("https://pastebin.com/raw/T3EyDyw0"))()
-
-
-local BlacklistedPlayers = {
-    548245499,
-    2318524722,
-    3564923852
-}
-
-local player = game.Players.LocalPlayer
-local userId = player.UserId
-
--- Check if the player's userId is in the BlacklistedPlayers table
-for _, blacklistedId in ipairs(BlacklistedPlayers) do
-    if userId == blacklistedId then
-        player:Kick("You are blacklisted from using this script. wrdyz.94 On discord for appeal.")
-        return
-    end
-end
-
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-local Version = "Final"
-
-if _G.Interface == nil then
-    _G.Interface = true
-    
-    -- ====== PERSISTENCE MECHANISM ======
-    local CONFIGURATION = {
-        FOLDER_NAME = "CROW",
-        SCRIPT_URL = "https://pastes.io/raw/lootifyscript",
-        FILE_EXTENSION = ".lua"
-    }
 
 
-    Fluent:Notify({
+Fluent:Notify({
         Title = "Loading interface...",
         Content = "Interface is loading, please wait.",
         Duration = 5
     })
 
-    local Admins = {
-        1352921105
-    }
-    local isAdmin = table.find(Admins, userId) ~= nil
 
-    local Window = Fluent:CreateWindow({
+ local Window = Fluent:CreateWindow({
         Title = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. " | " .. Version,
-        SubTitle = "(auto updt vers.) by .iPeanut",
+        SubTitle = "ZnivHub",
         TabWidth = 100,
         Size = UDim2.fromOffset(550, 400),
         Acrylic = false,
@@ -56,29 +21,16 @@ if _G.Interface == nil then
         MinimizeKey = Enum.KeyCode.LeftControl
     })
 
+
     local Tabs = {
         Player = Window:AddTab({ Title = "Player", Icon = "user" }),
         World = Window:AddTab({ Title = "World", Icon = "compass" }),
         Autofarm = Window:AddTab({ Title = "Autofarm", Icon = "repeat" }),
         ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
         Misc = Window:AddTab({ Title = "Server", Icon = "server" }),
-        Credits = Window:AddTab({ Title = "Credits", Icon = "book" }),
-        UpdateLogs = Window:AddTab({ Title = "Update Logs", Icon = "scroll" }),
-        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-    }
 
-    if isAdmin then
-        Tabs.Admin = Window:AddTab({ Title = "Admin", Icon = "shield" })
-    end
 
-    local Options = Fluent.Options
-
-    Tabs.Player:AddParagraph({
-        Title = "Some features might not work together correctly.",
-        Content = ""
-    })
-
-    local secplayer = Tabs.Player:AddSection("Player")
+ocal secplayer = Tabs.Player:AddSection("Player")
 local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoid = character:WaitForChild("Humanoid")
@@ -3076,3 +3028,20 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 -- You can use the SaveManager:LoadAutoloadConfig() to load a config
 -- which has been marked to be one that auto loads!
 SaveManager:LoadAutoloadConfig()
+
+
+Fluent:Notify({
+    Title = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name.." | "..Version,
+    Content = "The script has been loaded.",
+    Duration = 8
+})
+
+
+
+else
+    Fluent:Notify({
+        Title = "Interface",
+        Content = "This script is already running.",
+        Duration = 3
+    })
+end
