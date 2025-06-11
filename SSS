@@ -1711,3 +1711,740 @@ end
     if autocollectitemsns.Value then
         setupRespawnHandler()
     end
+    
+    local sectele = Tabs.World:AddSection("Teleport")
+
+    -- Get the names of all islands in workspace.Spawn
+    local islandNames = {}
+    for _, island in pairs(workspace.Spawn:GetChildren()) do
+            table.insert(islandNames, island.Name)
+    end
+    
+    -- Add "GhostIsland" explicitly to the islandNames list
+    table.insert(islandNames, "GhostIsland")
+    
+    -- Create the dropdown with island names
+    local teleportdrop = sectele:AddDropdown("teleportdrop", {
+        Title = "Islands:",
+        Values = islandNames,
+        Multi = false,
+        Default = "",  -- Empty string for no default selection
+    })
+    
+    -- Teleport function
+    local function teleportToIsland(islandName)
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local selectedIsland = workspace.Spawn:FindFirstChild(islandName)
+    
+            if selectedIsland then
+                -- Teleport to the selected island
+                character.HumanoidRootPart.CFrame = selectedIsland.CFrame
+            elseif islandName == "GhostIsland" then
+                -- Special case for GhostIsland
+                character.HumanoidRootPart.CFrame = CFrame.new(-4925.82422, 57.0164528, -453.611359, 0.108480982, 2.34560051e-08, -0.994098544, -1.04054667e-08, 1, 2.24597549e-08, 0.994098544, 7.90760346e-09, 0.108480982)
+            end
+        end
+    end
+    
+    -- Dropdown change handler
+    teleportdrop:OnChanged(function(Value)
+        if Value and Value ~= "" then
+            teleportToIsland(Value)
+        end
+    end)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Populate dropdown with the names of subfolders in 'workspace.WorldEvent'
+local worldEventFolder = workspace:WaitForChild("WorldEvent")
+local folderNames = {}
+
+-- Iterate through subfolders in 'WorldEvent'
+for _, subfolder in pairs(worldEventFolder:GetChildren()) do
+    if subfolder:IsA("Folder") then
+        -- Add the folder name to the dropdown list
+        table.insert(folderNames, subfolder.Name)
+    end
+end
+
+-- Now create the dropdown with the gathered folder names
+local worldeventdrop = sectele:AddDropdown("worldeventdrop", {
+    Title = "World Events:",
+    Values = folderNames,  -- Use the populated list of folder names
+    Multi = false,
+    Default = ""
+})
+
+-- When the dropdown value changes
+worldeventdrop:OnChanged(function(Value)
+    local selectedFolder = worldEventFolder:FindFirstChild(Value)
+    if selectedFolder then
+        -- Look for the first model in the selected folder
+        for _, item in pairs(selectedFolder:GetChildren()) do
+            if item:IsA("Model") and item.PrimaryPart then
+                -- Teleport to the model's PrimaryPart
+                local character = game.Players.LocalPlayer.Character
+                if character and character.PrimaryPart then
+                    character:SetPrimaryPartCFrame(item.PrimaryPart.CFrame + Vector3.new(0, 30, 0))
+                end
+                break  -- Teleport to the first model found
+            end
+        end
+    end
+end)
+
+
+
+
+
+-- World Event Notification System
+-- Implements efficient event detection and notification with minimal overhead
+local eventnotif = sectele:AddToggle("eventnotif", {
+    Title = "World Event Notifier", 
+    Default = false
+})
+
+-- Notification system state management
+local notificationState = {
+    connection = nil,
+    detectedEvents = {},
+    isActive = false
+}
+
+-- Validates if a folder contains valid event models
+local function hasValidEventModels(folder)
+    for _, item in pairs(folder:GetChildren()) do
+        if item:IsA("Model") and item.PrimaryPart then
+            return true
+        end
+    end
+    return false
+end
+
+-- Creates and displays a notification for specified event names
+local function notifyEvents(title, eventNames)
+    if #eventNames == 0 then return end
+    
+    local eventList = table.concat(eventNames, ", ")
+    Fluent:Notify({
+        Title = title,
+        Content = "Event" .. (#eventNames > 1 and "s: " or ": ") .. eventList,
+        Duration = math.min(5 + #eventNames, 10)  -- Scale duration with event count, max 10 seconds
+    })
+end
+
+-- Handles notification system activation/deactivation
+eventnotif:OnChanged(function()
+    local isEnabled = eventnotif.Value
+    
+    -- Clean up previous state if it exists
+    if notificationState.connection then
+        notificationState.connection:Disconnect()
+        notificationState.connection = nil
+    end
+    
+    -- Update internal state
+    notificationState.isActive = isEnabled
+    notificationState.detectedEvents = {}
+    
+    if not isEnabled then return end
+    
+    -- Process existing events (check once for any that are already present)
+    local existingEvents = {}
+    for _, folder in pairs(worldEventFolder:GetChildren()) do
+        if folder:IsA("Folder") and hasValidEventModels(folder) then
+            table.insert(existingEvents, folder.Name)
+            notificationState.detectedEvents[folder.Name] = true
+        end
+    end
+    
+    -- Notify about existing events if any
+    if #existingEvents > 0 then
+        notifyEvents("Active World Events", existingEvents)
+    end
+    
+    -- Set up monitoring for new events being added
+    notificationState.connection = worldEventFolder.ChildAdded:Connect(function(newFolder)
+        if not notificationState.isActive then return end
+        
+        -- Validate that this is an event folder with valid models
+        if not newFolder:IsA("Folder") then return end
+        
+        -- Wait briefly to allow models to be added to the folder
+        task.delay(0.5, function()
+            -- Skip if already processed or no longer active
+            if not notificationState.isActive or notificationState.detectedEvents[newFolder.Name] then return end
+            
+            -- Verify folder has valid models
+            if hasValidEventModels(newFolder) then
+                notificationState.detectedEvents[newFolder.Name] = true
+                notifyEvents("New World Event Detected", {newFolder.Name})
+            end
+        end)
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    local secweather = Tabs.World:AddSection("Weather")
+    local weathers = workspace.WeatherValues
+
+    local weathertog = secweather:AddToggle("weathertog", {Title = "Fog", Default = false })
+    weathertog:OnChanged(function()
+        weathers.Fog.Value = weathertog.Value
+    end)
+
+    local weathertog = secweather:AddToggle("weathertog", {Title = "Rain", Default = false })
+    weathertog:OnChanged(function()
+        weathers.Rain.Value = weathertog.Value
+    end)
+
+    local weathertog = secweather:AddToggle("weathertog", {Title = "Snow", Default = false })
+    weathertog:OnChanged(function()
+        weathers.Snow.Value = weathertog.Value
+    end)
+
+    local weathertog = secweather:AddToggle("weathertog", {Title = "Thunderstorm", Default = false })
+    weathertog:OnChanged(function()
+        weathers.Thunderstorm.Value = weathertog.Value
+    end)
+    
+    local secesp = Tabs.ESP:AddSection("Resource")
+    local secesp2 = Tabs.ESP:AddSection("Player")
+    
+    -- Default ESP settings for parts/models
+    local fillColor = Color3.fromRGB(255, 255, 255)
+    local outlineColor = Color3.fromRGB(255, 255, 255)
+    local fillEnabled = false
+    local outlineEnabled = false
+    
+    -- Default ESP settings for players
+    local playerFillColor = Color3.fromRGB(255, 255, 255)
+    local playerOutlineColor = Color3.fromRGB(255, 255, 255)
+    local playerFillEnabled = false
+    local playerOutlineEnabled = false
+    
+    -- Function to create the ESP highlight for parts and models
+    local function createESPForObject(object)
+        -- If it's a BasePart
+        if object:IsA("BasePart") then
+            -- Check if it's already inside a model
+            local model = object.Parent
+            if not model:IsA("Model") then
+                model = Instance.new("Model")
+                model.Name = object.Name
+                model.Parent = object.Parent
+                object.Parent = model
+            end
+    
+            -- Check if the part already has a highlight, create if not
+            local highlight = model:FindFirstChild("ESP_Highlight")
+            if not highlight then
+                highlight = Instance.new("Highlight")
+                highlight.Name = "ESP_Highlight"
+                highlight.FillColor = fillColor
+                highlight.OutlineColor = outlineColor
+                highlight.FillTransparency = fillEnabled and 0.5 or 1
+                highlight.OutlineTransparency = outlineEnabled and 0 or 1
+                highlight.Parent = model
+            end
+        -- If it's a Model
+        elseif object:IsA("Model") then
+            -- Check if the model already has a highlight
+            local highlight = object:FindFirstChild("ESP_Highlight")
+            if not highlight then
+                highlight = Instance.new("Highlight")
+                highlight.Name = "ESP_Highlight"
+                highlight.FillColor = fillColor
+                highlight.OutlineColor = outlineColor
+                highlight.FillTransparency = fillEnabled and 0.5 or 1
+                highlight.OutlineTransparency = outlineEnabled and 0 or 1
+                highlight.Parent = object
+            end
+        end
+    end
+    
+    -- Function to update highlights for models and parts
+    local function updateHighlightForObject(object)
+        local highlight = object:FindFirstChild("ESP_Highlight")
+        if highlight then
+            highlight.FillColor = fillColor
+            highlight.OutlineColor = outlineColor
+            highlight.FillTransparency = fillEnabled and 0.5 or 1
+            highlight.OutlineTransparency = outlineEnabled and 0 or 1
+        end
+    end
+    
+    -- Function to ensure that all parts/models in folders have ESP
+    local function checkAndWrapPartsAndModelsInFolders()
+        for _, folder in ipairs(workspace:GetChildren()) do
+            if folder.Name == "Folder" and #folder:GetChildren() > 0 then
+                for _, object in ipairs(folder:GetChildren()) do
+                    createESPForObject(object)  -- Add ESP to parts/models
+                    updateHighlightForObject(object) -- Update highlight settings
+                end
+            end
+        end
+    end
+    
+    -- Function to monitor newly added objects in folders
+    local function monitorNewObjectsInFolders()
+        -- Listen for new folders being added to the workspace
+        workspace.ChildAdded:Connect(function(child)
+            if child:IsA("Folder") and child.Name == "Folder" then
+                -- Listen for new parts/models added inside the folder
+                child.ChildAdded:Connect(function(object)
+                    if #child:GetChildren() > 0 then
+                        createESPForObject(object)
+                        updateHighlightForObject(object)
+                    end
+                end)
+    
+                -- Apply ESP to existing parts/models if the folder has children
+                if #child:GetChildren() > 0 then
+                    for _, object in ipairs(child:GetChildren()) do
+                        createESPForObject(object)
+                        updateHighlightForObject(object)
+                    end
+                end
+            end
+        end)
+    
+        -- Listen for new parts/models added inside existing folders
+        for _, folder in ipairs(workspace:GetChildren()) do
+            if folder:IsA("Folder") and folder.Name == "Folder" and #folder:GetChildren() > 0 then
+                folder.ChildAdded:Connect(function(object)
+                    createESPForObject(object)
+                    updateHighlightForObject(object)
+                end)
+    
+                -- Apply to existing parts/models in the folder if it has children
+                if #folder:GetChildren() > 0 then
+                    for _, object in ipairs(folder:GetChildren()) do
+                        createESPForObject(object)
+                        updateHighlightForObject(object)
+                    end
+                end
+            end
+        end
+    end
+    
+    -- Function to add a highlight to the player's character (excluding the local player)
+    local function addPlayerHighlight(character)
+        if character ~= game.Players.LocalPlayer.Character then  -- Skip the local player's character
+            if not character:FindFirstChild("ESP_Highlight") then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "ESP_Highlight"
+                highlight.FillColor = playerFillColor
+                highlight.OutlineColor = playerOutlineColor
+                highlight.FillTransparency = playerFillEnabled and 0.5 or 1
+                highlight.OutlineTransparency = playerOutlineEnabled and 0 or 1
+                highlight.Parent = character
+            end
+        end
+    end
+    
+    -- Set up ESP for all players (non-local)
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Character and player ~= game.Players.LocalPlayer then  -- Exclude local player
+            addPlayerHighlight(player.Character)
+        end
+    
+        player.CharacterAdded:Connect(function(character)
+            if player ~= game.Players.LocalPlayer then  -- Exclude local player
+                addPlayerHighlight(character)
+            end
+        end)
+    end
+    
+    game.Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function(character)
+            if player ~= game.Players.LocalPlayer then  -- Exclude local player
+                addPlayerHighlight(character)
+            end
+        end)
+    end)
+    
+    game.Players.PlayerRemoving:Connect(function(player)
+        if player.Character and player ~= game.Players.LocalPlayer then  -- Exclude local player
+            local highlight = player.Character:FindFirstChild("ESP_Highlight")
+            if highlight then
+                highlight:Destroy()
+            end
+        end
+    end)
+    
+    -- UI controls for Resource section (secesp)
+    local FillColorPicker = secesp:AddColorpicker("FillColorPicker", {
+        Title = "Fill Color",
+        Default = fillColor
+    })
+    FillColorPicker:OnChanged(function(newColor)
+        fillColor = newColor
+        checkAndWrapPartsAndModelsInFolders() -- Reapply to all parts and models
+    end)
+    
+    local OutlineColorPicker = secesp:AddColorpicker("OutlineColorPicker", {
+        Title = "Outline Color",
+        Default = outlineColor
+    })
+    OutlineColorPicker:OnChanged(function(newColor)
+        outlineColor = newColor
+        checkAndWrapPartsAndModelsInFolders() -- Reapply to all parts and models
+    end)
+    
+    local fillToggle = secesp:AddToggle("FillToggle", { Title = "Enable Fill", Default = fillEnabled })
+    fillToggle:OnChanged(function(enabled)
+        fillEnabled = enabled
+        checkAndWrapPartsAndModelsInFolders() -- Reapply to all parts and models
+    end)
+    
+    local outlineToggle = secesp:AddToggle("OutlineToggle", { Title = "Enable Outline", Default = outlineEnabled })
+    outlineToggle:OnChanged(function(enabled)
+        outlineEnabled = enabled
+        checkAndWrapPartsAndModelsInFolders() -- Reapply to all parts and models
+    end)
+    
+    -- UI controls for Player section (secesp2)
+    local playerFillColorPicker = secesp2:AddColorpicker("PlayerFillColorPicker", {
+        Title = "Player Fill Color",
+        Default = playerFillColor
+    })
+    playerFillColorPicker:OnChanged(function(newColor)
+        playerFillColor = newColor
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player.Character then
+                local highlight = player.Character:FindFirstChild("ESP_Highlight")
+                if highlight then
+                    highlight.FillColor = playerFillColor
+                end
+            end
+        end
+    end)
+    
+    local playerOutlineColorPicker = secesp2:AddColorpicker("PlayerOutlineColorPicker", {
+        Title = "Player Outline Color",
+        Default = playerOutlineColor
+    })
+    playerOutlineColorPicker:OnChanged(function(newColor)
+        playerOutlineColor = newColor
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player.Character then
+                local highlight = player.Character:FindFirstChild("ESP_Highlight")
+                if highlight then
+                    highlight.OutlineColor = playerOutlineColor
+                end
+            end
+        end
+    end)
+    
+    local playerFillToggle = secesp2:AddToggle("PlayerFillToggle", { Title = "Enable Fill", Default = playerFillEnabled })
+    playerFillToggle:OnChanged(function(enabled)
+        playerFillEnabled = enabled
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player.Character then
+                local highlight = player.Character:FindFirstChild("ESP_Highlight")
+                if highlight then
+                    highlight.FillTransparency = playerFillEnabled and 0.5 or 1
+                end
+            end
+        end
+    end)
+    
+    local playerOutlineToggle = secesp2:AddToggle("PlayerOutlineToggle", { Title = "Enable Outline", Default = playerOutlineEnabled })
+    playerOutlineToggle:OnChanged(function(enabled)
+        playerOutlineEnabled = enabled
+        for _, player in ipairs(game.Players:GetPlayers()) do
+            if player.Character then
+                local highlight = player.Character:FindFirstChild("ESP_Highlight")
+                if highlight then
+                    highlight.OutlineTransparency = playerOutlineEnabled and 0 or 1
+                end
+            end
+        end
+    end)
+    
+    -- Initial check for existing parts and models in folders
+    checkAndWrapPartsAndModelsInFolders()
+    
+    -- Run continuous check in a non-blocking manner
+    task.spawn(function()
+        while true do
+            checkAndWrapPartsAndModelsInFolders()
+            task.wait(1) -- Check every second for new objects
+        end
+    end)
+    
+    -- Call the function to monitor new resources being added
+    monitorNewObjectsInFolders()
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+   
+
+
+
+
+local miscserver = Tabs.Misc:AddSection("Servers")
+local Player = game:GetService("Players").LocalPlayer
+
+local function formatServerTime(timeString)
+    local hours, minutes, seconds = timeString:match("(%d+):(%d+):(%d+)")
+    if hours and minutes and seconds then
+        return string.format("%02dh %02dm %02ds", tonumber(hours), tonumber(minutes), tonumber(seconds))
+    else
+        return "Invalid Time"
+    end
+end
+
+local function getServerInfo()
+    local serverInfo = {
+        playerCount = #game:GetService("Players"):GetPlayers(),
+        ping = 0,
+        maxPlayers = game:GetService("Players").MaxPlayers
+    }
+
+    local success, response = pcall(function()
+        return game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
+    end)
+
+    if success then
+        local decoded = game:GetService("HttpService"):JSONDecode(response)
+        if decoded and decoded.data then
+            for _, server in ipairs(decoded.data) do
+                if server.id == game.JobId then
+                    serverInfo.playerCount = server.playing or serverInfo.playerCount
+                    serverInfo.maxPlayers = server.maxPlayers or serverInfo.maxPlayers
+                    serverInfo.ping = server.ping or 0
+                    break
+                end
+            end
+        end
+    end
+
+    return serverInfo
+end
+
+local function getPlayerPing()
+    local playerPingSeconds = Player:GetNetworkPing()
+    local playerPingMs = playerPingSeconds * 1000 * 2
+    return math.floor(playerPingMs)
+end
+
+local function getServerTimeText()
+    if Player.PlayerGui and Player.PlayerGui:FindFirstChild("Others") and
+       Player.PlayerGui.Others:FindFirstChild("ServerTime") then
+        return Player.PlayerGui.Others.ServerTime.Text or "00:00:00"
+    end
+    return "00:00:00"
+end
+
+local infoParagraph = miscserver:AddParagraph({
+    Title = "Server Uptime: Loading... | Player Count: N/A | Max Players: N/A | Ping: N/A ms",
+    Content = ""
+})
+
+local updateInterval = 10 -- Reduced update frequency to avoid lag
+local lastUpdateTime = tick()
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    if tick() - lastUpdateTime >= updateInterval then
+        lastUpdateTime = tick()
+        local serverInfo = getServerInfo()
+        local playerPing = getPlayerPing()
+        local uptime = formatServerTime(getServerTimeText())
+        infoParagraph:SetTitle("Server Uptime: " .. uptime ..
+                               " | Player Count: " .. serverInfo.playerCount ..
+                               "/" .. serverInfo.maxPlayers ..
+                               " | Ping: " .. playerPing .. " ms")
+    end
+end)
+
+local SVD = miscserver:AddDropdown("Server List", {
+    Title = "Server Browser",
+    Values = {},
+    Multi = false,
+    Default = nil,
+})
+
+local function getServerList()
+    local serverList = {}
+    local success, response = pcall(function()
+        return game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
+    end)
+
+    if success then
+        local decoded = game:GetService("HttpService"):JSONDecode(response)
+        if decoded and decoded.data then
+            for _, server in ipairs(decoded.data) do
+                if server.id ~= game.JobId then
+                    table.insert(serverList, {
+                        id = server.id,
+                        playing = server.playing or 0,
+                        maxPlayers = server.maxPlayers or 0,
+                        ping = server.ping or 0
+                    })
+                end
+            end
+        end
+    end
+
+    return serverList
+end
+
+_G.ServerIDs = {}
+local servers = getServerList()
+local serverOptions = {}
+
+for _, server in ipairs(servers) do
+    local option = string.format("Players: %d/%d | Ping: %dms",
+        server.playing, server.maxPlayers, server.ping)
+    table.insert(serverOptions, option)
+    _G.ServerIDs[option] = server.id
+end
+
+if #serverOptions > 0 then
+    SVD:SetValues(serverOptions)
+else
+    SVD:SetValues({"No servers available"})
+end
+
+SVD:OnChanged(function(Value)
+    local serverId = _G.ServerIDs[Value]
+    if serverId then
+        Fluent:Notify({
+            Title = "Teleporting",
+            Content = "Joining server...",
+            Duration = 3
+        })
+        pcall(function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(
+                game.PlaceId, serverId, game.Players.LocalPlayer
+            )
+        end)
+    end
+end)
+
+miscserver:AddButton({
+    Title = "Copy Server ID: ".. tostring(game.JobId),
+    Callback = function()
+        pcall(function()
+            setclipboard(tostring(game.JobId))
+        end)
+        Fluent:Notify({
+            Title = "Server ID Copied",
+            Content = "Server ID: " .. tostring(game.JobId) .. " copied to clipboard.",
+            Duration = 3
+        })
+    end
+})
+
+miscserver:AddButton({
+    Title = "Rejoin",
+    Description = "",
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        pcall(function()
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end)
+    end
+})
+
+miscserver:AddButton({
+    Title = "Server Hop",
+    Description = "",
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        local HttpService = game:GetService("HttpService")
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+
+        Fluent:Notify({
+            Title = "Server Hop",
+            Content = "Finding a populated server...",
+            Duration = 2
+        })
+
+        local apiUrl = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet(apiUrl))
+        end)
+
+        if success and result and result.data then
+            local validServers = {}
+            for _, server in ipairs(result.data) do
+                if server.id ~= game.JobId and server.playing < server.maxPlayers then
+                    table.insert(validServers, server)
+                end
+            end
+
+            table.sort(validServers, function(a, b)
+                return a.playing > b.playing
+            end)
+
+            if #validServers > 0 then
+                local topServerCount = math.min(3, #validServers)
+                local serverIndex = math.random(1, topServerCount)
+                local server = validServers[serverIndex]
+
+                Fluent:Notify({
+                    Title = "Server Hop",
+                    Content = "Joining server with " .. server.playing .. "/" .. server.maxPlayers .. " players",
+                    Duration = 2
+                })
+
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+            else
+                Fluent:Notify({
+                    Title = "Server Hop",
+                    Content = "No servers found. Joining random server...",
+                    Duration = 2
+                })
+
+                TeleportService:Teleport(game.PlaceId, LocalPlayer)
+            end
+        else
+            Fluent:Notify({
+                Title = "Server Hop",
+                Content = "Joining random server...",
+                Duration = 2
+            })
+
+            TeleportService:Teleport(game.PlaceId, LocalPlayer)
+        end
+    end
+})
