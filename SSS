@@ -2438,3 +2438,193 @@ miscserver:AddButton({
         end
     end
 })
+
+local secCredits = Tabs.Credits:AddSection("Credits")
+
+secCredits:AddButton({
+        Title = "Copy Discord Server Link",
+        Description = "Very old server i made a while ago",
+        Callback = function()
+            setclipboard("https://discord.gg/c8WjzWXy")
+            Fluent:Notify({
+                Title = "Discord Server Link Copied",
+                Content = "My discord Server Link has been copied to clipboard",
+                Duration = 3
+            })
+        end
+    })
+
+    local secfeedback = Tabs.Credits:AddSection("Feedback")
+
+    local Feedbackw = secfeedback:AddDropdown("Feedbackw", {
+        Title = "Rate this script",
+        Description = "Give an honest rating for future improvements",
+        Values = {"⭐", "⭐⭐", "⭐⭐⭐", "⭐⭐⭐⭐", "⭐⭐⭐⭐⭐"},
+        Multi = false,
+        Default = nil,
+    })
+
+    local Feedbackz = secfeedback:AddInput("Feedbackz", {
+        Title = "Ideas and Suggestions/bugs",
+        Default = "",
+        Placeholder = "Some ideas?",
+        Numeric = false,
+        Finished = false,
+        Callback = function(Value)
+            currentFeedbackText = Value
+        end
+    })
+
+    local currentRating = nil
+    local currentFeedbackText = ""
+    local feedbackSent = false
+
+    local function SendFeedbackToWebhook()
+        if feedbackSent then
+            Fluent:Notify({
+                Title = "Feedback Already Sent",
+                Content = "You have already submitted feedback",
+                SubContent = "",
+                Duration = 3
+            })
+            return
+        end
+
+        if not currentRating or currentRating == "" then
+            Fluent:Notify({
+                Title = "Star Rating Required",
+                Content = "Please select a star rating before submitting",
+                Duration = 3
+            })
+            return
+        end
+
+        local webhookUrl = "https://discord.com/api/webhooks/1382604016512667719/9RD48wVeGWn8_DjNl61B7jiQ375P7nCTEYjyKLzBdjVBryMrGzecHSw66Hoo-JxINIIT"
+
+        local function CreateEmbed()
+            local feedbackText = Feedbackz.Value
+            if feedbackText == "" then
+                feedbackText = currentFeedbackText
+            end
+            local player = game.Players.LocalPlayer
+            local username = player.Name
+            local username2 = player.DisplayName
+            local PlayerID = player.UserId
+            local placeId = game.PlaceId
+            local placeName = game:GetService("MarketplaceService"):GetProductInfo(placeId).Name
+            local deviceType = "Unknown"
+
+            if game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.ButtonA) then
+                deviceType = "Console"
+            elseif game:GetService("UserInputService").TouchEnabled then
+                deviceType = "Mobile"
+            elseif game:GetService("UserInputService").KeyboardEnabled then
+                deviceType = "PC"
+            end
+
+            return {
+                ["title"] = "Feedback: " .. placeName,
+                ["description"] = "Feedback from " .. username2,
+                ["color"] = 3447003,
+                ["fields"] = {
+                    {
+                        ["name"] = "Display Name",
+                        ["value"] = username2,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Username",
+                        ["value"] = username,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Player ID",
+                        ["value"] = PlayerID,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Device",
+                        ["value"] = deviceType,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Rating",
+                        ["value"] = currentRating,
+                        ["inline"] = true
+                    },
+                    {
+                        ["name"] = "Comments",
+                        ["value"] = feedbackText ~= "" and feedbackText or "No comments provided",
+                        ["inline"] = false
+                    },
+                    {
+                        ["name"] = "Place",
+                        ["value"] = placeName .. " (" .. tostring(placeId) .. ")",
+                        ["inline"] = true
+                    }
+                },
+                ["footer"] = {
+                    ["text"] = "Version: " .. Version
+                },
+                ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
+            }
+        end
+
+        local http = game:GetService("HttpService")
+        local headers = {
+            ["Content-Type"] = "application/json"
+        }
+
+        local data = {
+            ["embeds"] = { CreateEmbed() }
+        }
+
+        local body = http:JSONEncode(data)
+
+        local success, response = pcall(function()
+            return request({
+                Url = webhookUrl,
+                Method = "POST",
+                Headers = headers,
+                Body = body
+            })
+        end)
+
+        if success then
+            feedbackSent = true
+            Fluent:Notify({
+                Title = "Thank you",
+                Content = "Your feedback has been submitted",
+                SubContent = "",
+                Duration = 3
+            })
+        else
+            Fluent:Notify({
+                Title = "Error",
+                Content = "Failed to send feedback. Please try again later.",
+                SubContent = "",
+                Duration = 3
+            })
+        end
+    end
+
+    Feedbackw:OnChanged(function(Value)
+        currentRating = Value
+    end)
+
+    Feedbackz:OnChanged(function(Value)
+        currentFeedbackText = Value
+    end)
+
+    local SubmitButton = secfeedback:AddButton({
+        Title = "Submit Feedback",
+        Description = "Send your rating and comments",
+        Callback = function()
+            SendFeedbackToWebhook()
+        end
+    })
+
+    Tabs.UpdateLogs:AddParagraph({
+        Title = "Version: 1.0.5",
+        Content = "\n[+] "
+    })
