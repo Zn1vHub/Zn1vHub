@@ -33,19 +33,9 @@ Fluent:Notify({
     local Options = Fluent.Options
 
     Tabs.Player:AddParagraph({
-        Title = "Some features might not work together correctly.",
+        Title = "Operation Delta",
         Content = ""
     })
-
-    local secplayer = Tabs.Player:AddSection("Player")
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
-local rootPart = character:WaitForChild("HumanoidRootPart")
-local basespeed = 16
-local basejump = humanoid.JumpPower
-
-local Options = Fluent.Options
 
     local secplayer = Tabs.Player:AddSection("Player")
 local player = game.Players.LocalPlayer
