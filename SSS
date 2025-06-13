@@ -158,6 +158,73 @@ secplayer:AddButton({
             end
         end
     end)
+
+
+    local playermisc = Tabs.Player:AddSection("Misc")
+
+    local equipbest = playermisc:AddToggle("equipbest", {Title = "Always equip Best", Default = false })
+    equipbest:OnChanged(function()
+        if equipbest.Value then
+            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = false
+            while equipbest.Value do
+                task.wait(1) -- Reduced frequency to avoid lag
+                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Backpack"):WaitForChild("EquipBest"):FireServer()
+            end
+        else
+            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = true
+        end
+    end
+
+
+
+    playermisc:AddButton({
+        Title = "Redeem all codes",
+        Callback = function()
+            -- Access the ModuleScript
+local moduleScript = game:GetService("ReplicatedStorage").Config.Planning.Config.CodeConfig
+
+-- Require the ModuleScript to access the table/data inside it
+local config = require(moduleScript)
+
+-- Function to recursively get all strings (excluding tables with a 'userId' greater than -1)
+local function fetchStrings(data)
+    local stringList = {}
+
+    -- Check if the data is a table
+    if type(data) == "table" then
+        -- Check if the table contains a 'userId' key, and ensure it's -1 or missing
+        if not data.userId or data.userId == -1 then
+            -- Iterate over all the keys in the table
+            for key, value in pairs(data) do
+                local nestedStrings = fetchStrings(value)
+                for _, str in ipairs(nestedStrings) do
+                    table.insert(stringList, str)
+                end
+            end
+        end
+    elseif type(data) == "string" then
+        -- If the data is a string, add it to the list
+        table.insert(stringList, data)
+    end
+
+    return stringList
+end
+
+-- Fetch the strings from the CodeConfig
+local strings = fetchStrings(config)
+
+-- If strings were found, fire the remote event with a 1 second delay between each
+if #strings > 0 then
+    for _, str in ipairs(strings) do
+        local args = { str }  -- Passing each string as an argument
+        -- Wait for the remote event and fire it with the current string
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Code"):WaitForChild("CodeReward"):FireServer(unpack(args))
+        
+        wait(3.5)  -- Wait for 3.5 seconds before firing again
+    end
+end
+        end
+    })
   
   local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
 
