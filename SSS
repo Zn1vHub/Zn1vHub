@@ -161,20 +161,16 @@ secplayer:AddButton({
 
 
     local playermisc = Tabs.Player:AddSection("Misc")
+    
+    local togstat = playermisc:AddToggle("togstat", {Title = "Open Stats", Default = false })
 
-    local equipbest = playermisc:AddToggle("equipbest", {Title = "Always equip Best", Default = false })
-    equipbest:OnChanged(function()
-        if equipbest.Value then
-            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = false
-            while equipbest.Value do
-                task.wait(1) -- Reduced frequency to avoid lag
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Backpack"):WaitForChild("EquipBest"):FireServer()
-            end
+    togstat:OnChanged(function()
+        if togstat.Value then
+            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.StatPoints.Visible = true
         else
-            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = true
+            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.StatPoints.Visible = false
         end
-    end
-
+    end)
 
 
     playermisc:AddButton({
