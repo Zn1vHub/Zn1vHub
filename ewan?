@@ -41,13 +41,13 @@ if _G.Interface == nil then
     })
 
     local Admins = {
-        1352921105
+        8205778977
     }
     local isAdmin = table.find(Admins, userId) ~= nil
 
     local Window = Fluent:CreateWindow({
         Title = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .. " | " .. Version,
-        SubTitle = "(auto updt vers.) by .iPeanut",
+        SubTitle = "tite",
         TabWidth = 100,
         Size = UDim2.fromOffset(550, 400),
         Acrylic = false,
@@ -222,21 +222,6 @@ secplayer:AddButton({
         end
     end)
 
-
-    local playermisc = Tabs.Player:AddSection("Misc")
-
-    local equipbest = playermisc:AddToggle("equipbest", {Title = "Always equip Best", Default = false })
-    equipbest:OnChanged(function()
-        if equipbest.Value then
-            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = false
-            while equipbest.Value do
-                task.wait(1) -- Reduced frequency to avoid lag
-                game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Backpack"):WaitForChild("EquipBest"):FireServer()
-            end
-        else
-            game:GetService("Players").LocalPlayer.PlayerGui.Main.Func.Tip.Visible = true
-        end
-    end)
 
 
 
@@ -1504,13 +1489,6 @@ local Dungeons = {
         npcBaseId = 101020,
         island = 4,
         isBoss = false
-    },
-    {
-        name = "Prophet",
-        difficulty = "",
-        npcBaseId = 101029,
-        island = 4,
-        isBoss = true
     },
     {
         name = "The Flame King",
